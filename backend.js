@@ -2,9 +2,10 @@ const express = require('express');
 const app = express();  
 const PORT = process.env.PORT || 3000;  
 const path = require('path')
-
+const {createTodo} = require("./types.js")
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json())
 
 // A simple route  
 app.get('/', (req, res) => {  
@@ -12,15 +13,22 @@ app.get('/', (req, res) => {
 });  
 
 // making a todo post method 
-app.post('/post' , (req, res) => {
-    console.log(JSON.stringify(req.body))
-    res.send('ok')
+app.post('/todo' , (req,res) => {
+    const todo = createTodo.safeParse(req.body)
+    if(!todo.success){
+        console.log(todo.error)
+        res.sendStatus(400)
+    }
+
+    console.log('here')
+    console.log(todo.data.title)
+    console.log(todo.data.completed)
 })
 
 app.get('/get' , (req, res) => {
     const id = req.body.id;
     console.log(id)
-    res.send('ok')
+    // res.send('ok')
 })
 
 
